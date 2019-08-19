@@ -1,12 +1,47 @@
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
+const bodyParser = require("body-parser");
 const productsRouter = require("./api/routes/products");
 const ordersRoutes = require("./api/routes/orders");
+const mongoose = require("mongoose");
 
 app.use(morgan("dev"));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type,Accept,Authorization"
+  );
+  if (req.method === "OPTIONS") {
+    res.header("Access-Control-Allow-Mthods", "PUT,GET,POST,PATCH,DELETE");
+    return res.status(200).json({});
+  }
+  next();
+});
+
 app.use("/products", productsRouter);
 app.use("/orders", ordersRoutes);
+
+// mongoose.connect(`
+// mongodb://node-shop:hamza123@ds211268.mlab.com:11268/node-shop
+// `);
+
+mongoose.connect(
+  `mongodb://node-shop:hamza123@ds211268.mlab.com:11268/node-shop`
+);
+// .then(() => {
+//   app.listen(8080, () => {
+//     console.log("App is listening at 8080");
+//   });
+// })
+// .catch(err => {
+//   console.log(err);
+// });
+
 app.use((req, res, next) => {
   console.log("node is running....");
   res.status(200).json({
