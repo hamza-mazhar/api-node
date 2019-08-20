@@ -5,16 +5,20 @@ const mongoose = require("mongoose");
 
 router.get("/", (req, res) => {
   Product.find()
+    .select("name price _id")
     .exec()
     .then(docs => {
-      console.log("=============>", docs);
-      // if (res.length >= 0) {
-      res.status(200).json(docs);
-      // } else {
-      //   res.status(404).json({
-      //     message: "Not get any data"
-      //   });
-      // }
+      const response = {
+        count: docs.length,
+        products: docs.map(obj => {
+          return {
+            name: obj.name,
+            price: obj.price,
+            _id: obj._id
+          };
+        })
+      };
+      res.status(200).json(response);
     })
     .catch(err => {
       res.status(500).json({
@@ -25,7 +29,6 @@ router.get("/", (req, res) => {
 
 router.get("/:productId", (req, res) => {
   const id = req.params.productId;
-  console.log(id);
   Product.findById(id)
     .exec()
     .then(docs => {
@@ -50,31 +53,48 @@ router.post("/", (req, res, next) => {
     name: req.body.name,
     price: req.body.price
   });
-
   product
     .save()
-    .then(res => {
-      console.log(res);
+    .then(obj => {
+      res.status(200).json(obj);
     })
     .catch(err => {
-      console.log(err);
+      res.status(500).json({
+        error: err
+      });
     });
-
-  res.status(200).json({
-    message: "get products call"
-  });
 });
 
-router.delete("/", (req, res) => {
-  res.status(200).json({
-    message: "get products call"
-  });
+router.delete("/:id", (req, res) => {
+  const id = req.params.id;
+  Product.remove({ _id: id })
+    .exec()
+    .then(result => {
+      res.status(200).json(result);
+    })
+    .catch(err => {
+      res.status(500).json({
+        error: err
+      });
+    });
 });
 
-router.patch("/", (req, res) => {
-  res.status(200).json({
-    message: "get products call"
-  });
+router.patch("/:id", (req, res) => {
+  const id = req.params.id;
+  const updateOpt = {};
+  for (const opt of req.body) {
+    updateOpt[opt.propName] = opt.value;
+  }
+  Product.update({ _id: id })
+    .exec()
+    .then(result => {
+      res.status(200).json(result);
+    })
+    .catch(err => {
+      res.status(500).json({
+        error: err
+      });
+    });
 });
 
 module.exports = router;

@@ -26,21 +26,14 @@ app.use((req, res, next) => {
 app.use("/products", productsRouter);
 app.use("/orders", ordersRoutes);
 
-// mongoose.connect(`
-// mongodb://node-shop:hamza123@ds211268.mlab.com:11268/node-shop
-// `);
+mongoose.Promise = global.Promise;
 
 mongoose.connect(
-  `mongodb://node-shop:hamza123@ds211268.mlab.com:11268/node-shop`
+  `mongodb://node-shop:hamza123@ds211268.mlab.com:11268/node-shop`,
+  {
+    useNewUrlParser: true
+  }
 );
-// .then(() => {
-//   app.listen(8080, () => {
-//     console.log("App is listening at 8080");
-//   });
-// })
-// .catch(err => {
-//   console.log(err);
-// });
 
 app.use((req, res, next) => {
   console.log("node is running....");
