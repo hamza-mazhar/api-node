@@ -40,7 +40,7 @@ mongoose.connect(
 app.use((req, res, next) => {
   console.log("node is running....");
   res.status(200).json({
-    message: "it's work"
+    // message: "it's work"
   });
 });
 
