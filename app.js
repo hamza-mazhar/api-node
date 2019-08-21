@@ -4,12 +4,13 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const productsRouter = require("./api/routes/products");
 const ordersRoutes = require("./api/routes/orders");
+const userRoutes = require("./api/routes/users");
 const mongoose = require("mongoose");
 
 app.use(morgan("dev"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
+app.use("/uploads", express.static("uploads"));
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
@@ -25,6 +26,7 @@ app.use((req, res, next) => {
 
 app.use("/products", productsRouter);
 app.use("/orders", ordersRoutes);
+app.use("/users", userRoutes);
 
 mongoose.Promise = global.Promise;
 
